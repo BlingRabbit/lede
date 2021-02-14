@@ -5,7 +5,7 @@ function index()
 		return
 	end
 	local page
-	page = entry({"admin", "network", "flowoffload"}, cbi("flowoffload"), _("Turbo ACC Center"), 101)
+	page = entry({"admin", "network", "flowoffload"}, cbi("flowoffload"), _("Turbo ACC Center"), 1001)
 	page.i18n = "flowoffload"
 	page.dependent = true
 	
@@ -13,15 +13,15 @@ function index()
 end
 
 local function is_running()
-	return luci.sys.call("iptables --list | grep FLOWOFFLOAD >/dev/null") == 0
+	return luci.sys.call("[ `cat /sys/module/xt_FLOWOFFLOAD/refcnt 2>/dev/null` -gt 0 ] 2>/dev/null") == 0
 end
 
 local function is_bbr()
-	return luci.sys.call("sysctl net.ipv4.tcp_congestion_control | grep bbr >/dev/null") == 0
+	return luci.sys.call("[ `cat /proc/sys/net/ipv4/tcp_congestion_control 2>/dev/null` = bbr ] 2>/dev/null") == 0
 end
 
 local function is_fullcone()
-	return luci.sys.call("iptables -t nat -L -n --line-numbers | grep FULLCONENAT >/dev/null") == 0
+	return luci.sys.call("[ `cat /sys/module/xt_FULLCONENAT/refcnt 2>/dev/null` -gt 0 ] 2>/dev/null") == 0
 end
 
 local function is_dns()
